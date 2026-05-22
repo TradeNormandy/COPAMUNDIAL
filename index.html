@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚽ Copa Élite 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================
+   TOKENS
+============================ */
+:root {
+  --navy:    #0d1b2a;
+  --navy2:   #1a2e42;
+  --navy3:   #243b55;
+  --gold:    #f5a623;
+  --gold2:   #e09400;
+  --green:   #1db954;
+  --green2:  #168f3e;
+  --red:     #e63946;
+  --orange:  #f4731a;
+  --yellow:  #f5d623;
+  --bg:      #f0f3f8;
+  --card:    #ffffff;
+  --text:    #1a2535;
+  --muted:   #6b7a90;
+  --border:  #e2e8f0;
+  --shadow:  0 2px 16px rgba(13,27,42,.09);
+  --shadow2: 0 6px 32px rgba(13,27,42,.16);
+  --r:       14px;
+  --r2:      8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ============================
+   LOGIN
+============================ */
+#loginScreen {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy2) 45%, var(--green2) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+#loginScreen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(29,185,84,.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(245,166,35,.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+/* pitch lines decoration */
+#loginScreen::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 500px;
+  height: 500px;
+  border: 1px solid rgba(255,255,255,.04);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.login-card {
+  background: rgba(255,255,255,.97);
+  border-radius: 22px;
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.35);
+  position: relative;
+  z-index: 1;
+}
+.login-ball { font-size: 52px; display: block; text-align: center; margin-bottom: 6px; animation: bounce 2s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.login-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--navy);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.login-sub {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.login-card input {
+  display: block;
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--r2);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  margin-bottom: 12px;
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+  background: #f8fafc;
+}
+.login-card input:focus { border-color: var(--navy); background: #fff; box-shadow: 0 0 0 3px rgba(13,27,42,.08); }
+.btn-login {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy3) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--r2);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(13,27,42,.3);
+}
+.btn-login:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,27,42,.4); }
+.btn-login:active { transform: translateY(0); }
+.login-err {
+  color: var(--red);
+  font-size: 13px;
+  text-align: center;
+  margin-top: 10px;
+  display: none;
+  font-weight: 600;
+}
+.login-footer {
+  margin-top: 20px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--r2);
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ============================
+   LOADING
+============================ */
+#loadingOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13,27,42,.93);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  color: #fff;
+}
+.spinner {
+  width: 52px; height: 52px;
+  border: 4px solid rgba(255,255,255,.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================
+   APP SHELL
+============================ */
+#app { display: none; }
+
+.header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,.25);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.header-brand .ball { font-size: 22px; }
+.brand-text h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: .5px;
+  line-height: 1;
+}
+.brand-text small { font-size: 10px; opacity: .7; display: block; margin-top: 1px; }
+
+.header-right { display: flex; align-items: center; gap: 8px; }
+.role-chip {
+  padding: 3px 8px;
+  background: rgba(255,255,255,.15);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.header-username { font-size: 12px; opacity: .8; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn-logout {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+  padding: 5px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .2s;
+}
+.btn-logout:hover { background: rgba(255,255,255,.22); }
+
+/* Campaign progress bar in header */
+.campaign-strip {
+  padding: 6px 20px 8px;
+  background: rgba(0,0,0,.25);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.campaign-strip-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  opacity: .9;
+}
+.camp-label { white-space: nowrap; font-weight: 600; }
+.camp-bar {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.camp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+.camp-days { white-space: nowrap; }
+
+/* ============================
+   BREADCRUMB
+============================ */
+.breadcrumb {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 9px 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.bc-item { color: var(--navy); font-weight: 600; cursor: pointer; }
+.bc-item:hover { text-decoration: underline; }
+.bc-sep { color: var(--muted); }
+.bc-current { color: var(--muted); }
+
+/* ============================
+   MAIN
+============================ */
+.main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* ============================
+   VIEWS
+============================ */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ============================
+   TABS
+============================ */
+.tabs {
+  display: flex;
+  background: rgba(13,27,42,.06);
+  border-radius: var(--r2);
+  padding: 4px;
+  margin-bottom: 20px;
+  gap: 3px;
+}
+.tab {
+  flex: 1;
+  padding: 9px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+}
+.tab.active { background: #fff; color: var(--navy); box-shadow: 0 1px 6px rgba(0,0,0,.1); }
+
+/* ============================
+   CARDS
+============================ */
+.card {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 14px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: .3px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* ============================
+   HERO CARDS (GROUP)
+============================ */
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.group-card {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+  border-top: 4px solid var(--border);
+}
+.group-card:hover { transform: translateY(-3px); box-shadow: var(--shadow2); }
+.group-card.c-green { border-top-color: var(--green); }
+.group-card.c-gold   { border-top-color: var(--gold); }
+.group-card.c-orange { border-top-color: var(--orange); }
+.group-card.c-red    { border-top-color: var(--red); }
+.group-card::after {
+  content: '⚽';
+  position: absolute;
+  right: -14px; bottom: -14px;
+  font-size: 72px;
+  opacity: .05;
+  pointer-events: none;
+  transform: rotate(-20deg);
+}
+.group-code { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.group-name { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.big-pct {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.big-pct.c-green  { color: var(--green); }
+.big-pct.c-gold   { color: var(--gold); }
+.big-pct.c-orange { color: var(--orange); }
+.big-pct.c-red    { color: var(--red); }
+.group-leader { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.group-leader strong { color: var(--green); }
+.group-action { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+/* ============================
+   STATS ROW
+============================ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat {
+  background: var(--bg);
+  border-radius: var(--r2);
+  padding: 14px;
+  text-align: center;
+}
+.stat-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-lbl { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+
+/* ============================
+   BADGES
+============================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.badge.b-green  { background: #d1f7e4; color: var(--green2); }
+.badge.b-gold   { background: #fff3d0; color: var(--gold2); }
+.badge.b-orange { background: #fde8d8; color: #c05a10; }
+.badge.b-red    { background: #fde0e2; color: #b72333; }
+
+/* ============================
+   PROGRESS BARS
+============================ */
+.prog-wrap { margin-bottom: 14px; }
+.prog-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+.prog-track {
+  height: 10px;
+  background: var(--bg);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+.prog-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 1s ease;
+  position: relative;
+}
+.prog-fill.c-green  { background: linear-gradient(90deg, var(--green2), var(--green)); }
+.prog-fill.c-gold   { background: linear-gradient(90deg, var(--gold2), var(--gold)); }
+.prog-fill.c-orange { background: linear-gradient(90deg, #c05a10, var(--orange)); }
+.prog-fill.c-red    { background: linear-gradient(90deg, #b72333, var(--red)); }
+.prog-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* ============================
+   RANKING LIST
+============================ */
+.rank-list { list-style: none; }
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--r2);
+  margin-bottom: 4px;
+  transition: background .15s;
+  cursor: pointer;
+}
+.rank-item:hover { background: var(--bg); }
+.rank-num {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px; font-weight: 900;
+  flex-shrink: 0;
+}
+.rank-num.p1 { background: linear-gradient(135deg, var(--gold2), var(--gold)); color: #fff; box-shadow: 0 2px 8px rgba(245,166,35,.5); }
+.rank-num.p2 { background: linear-gradient(135deg, #8e9eab, #b2bec3); color: #fff; }
+.rank-num.p3 { background: linear-gradient(135deg, #a0522d, #cd7f32); color: #fff; }
+.rank-num.px { background: var(--bg); color: var(--muted); }
+
+.rank-info { flex: 1; min-width: 0; }
+.rank-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-top: 2px; }
+.rank-bar-fill { height: 100%; border-radius: 3px; transition: width 1s; }
+
+.rank-pct {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 900;
+  min-width: 60px; text-align: right;
+}
+.rank-arrow { color: var(--muted); font-size: 16px; }
+
+/* ============================
+   WINNER BANNER
+============================ */
+.winner-banner {
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  border-radius: var(--r2);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 20px rgba(245,166,35,.35);
+}
+.winner-banner .trophy { font-size: 32px; flex-shrink: 0; }
+.winner-banner h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800; color: #5a3000; line-height: 1.1; }
+.winner-banner p { font-size: 12px; color: #6d3d00; margin-top: 2px; }
+
+.no-winner {
+  background: var(--bg);
+  border-radius: var(--r2);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* ============================
+   BRAND CARDS
+============================ */
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+.brand-card {
+  background: var(--bg);
+  border-radius: var(--r2);
+  padding: 14px;
+  border-left: 4px solid var(--border);
+}
+.brand-card.c-green  { border-color: var(--green); }
+.brand-card.c-gold   { border-color: var(--gold); }
+.brand-card.c-orange { border-color: var(--orange); }
+.brand-card.c-red    { border-color: var(--red); }
+.brand-n { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 4px; }
+.brand-pct {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 900; line-height: 1;
+  margin-bottom: 4px;
+}
+.brand-pct.c-green  { color: var(--green); }
+.brand-pct.c-gold   { color: var(--gold); }
+.brand-pct.c-orange { color: var(--orange); }
+.brand-pct.c-red    { color: var(--red); }
+.brand-vals { font-size: 11px; color: var(--muted); }
+
+/* ============================
+   WEEK TRACKER
+============================ */
+.week-tracker { display: flex; gap: 7px; align-items: center; }
+.wdot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+.wdot:hover { transform: scale(1.15); }
+.wdot.win     { background: var(--green); color: #fff; box-shadow: 0 2px 8px rgba(29,185,84,.4); }
+.wdot.lose    { background: var(--red); color: #fff; box-shadow: 0 2px 8px rgba(230,57,70,.3); }
+.wdot.pending { background: #e2e8f0; color: #a0aec0; border: 2px dashed #a0aec0; }
+.wdot.active  { background: var(--gold); color: #fff; box-shadow: 0 2px 8px rgba(245,166,35,.4); animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 2px 8px rgba(245,166,35,.4)} 50%{box-shadow:0 2px 16px rgba(245,166,35,.7)} }
+
+.week-label { font-size: 11px; color: var(--muted); margin-left: 4px; }
+
+/* ============================
+   CLIENT LIST
+============================ */
+.client-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.client-row:last-child { border-bottom: none; }
+.client-name-col { flex: 1; min-width: 140px; }
+.client-name-col .cn { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+.client-pct-col {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px; font-weight: 900;
+  min-width: 58px; text-align: right;
+}
+
+/* ============================
+   HERO VENDOR CARD
+============================ */
+.vendor-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy3) 100%);
+  border-radius: var(--r);
+  padding: 24px;
+  color: #fff;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.vendor-hero::before {
+  content: '⚽';
+  position: absolute;
+  right: -20px; top: -20px;
+  font-size: 100px;
+  opacity: .07;
+  transform: rotate(-15deg);
+}
+.vh-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.vh-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px; font-weight: 900; line-height: 1;
+}
+.vh-group { font-size: 13px; opacity: .7; margin-top: 3px; }
+.vh-rank {
+  text-align: center;
+  background: rgba(255,255,255,.1);
+  border-radius: var(--r2);
+  padding: 8px 14px;
+}
+.vh-rank-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 40px; font-weight: 900;
+  color: var(--gold); line-height: 1;
+}
+.vh-rank-sub { font-size: 11px; opacity: .7; }
+.vh-progress-bar {
+  height: 14px;
+  background: rgba(255,255,255,.15);
+  border-radius: 7px;
+  overflow: hidden;
+  margin: 8px 0 6px;
+}
+.vh-progress-fill {
+  height: 100%;
+  border-radius: 7px;
+  transition: width 1.2s ease;
+}
+.vh-progress-fill.c-green  { background: linear-gradient(90deg, var(--green2), var(--green)); }
+.vh-progress-fill.c-gold   { background: linear-gradient(90deg, var(--gold2), var(--gold)); }
+.vh-progress-fill.c-orange { background: linear-gradient(90deg, #c05a10, var(--orange)); }
+.vh-progress-fill.c-red    { background: linear-gradient(90deg, #b72333, var(--red)); }
+.vh-labels { display: flex; justify-content: space-between; font-size: 12px; opacity: .8; }
+.vh-prize {
+  margin-top: 14px;
+  background: rgba(245,166,35,.2);
+  border: 1px solid rgba(245,166,35,.4);
+  border-radius: var(--r2);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* ============================
+   USER MANAGEMENT
+============================ */
+.user-mgmt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.info-box {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--r2);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #78350f;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.info-box.blue {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1e3a5f;
+}
+.user-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.user-table th {
+  text-align: left; padding: 9px 12px;
+  background: var(--bg);
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .5px;
+  white-space: nowrap;
+}
+.user-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.user-table tr:last-child td { border-bottom: none; }
+.user-table tr:hover td { background: var(--bg); }
+.role-tag {
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+}
+.role-tag.admin       { background: #fde0e2; color: var(--red); }
+.role-tag.coordinador { background: #dbeafe; color: var(--navy); }
+.role-tag.vendedor    { background: #d1f7e4; color: var(--green2); }
+.u-input {
+  padding: 6px 10px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  width: 110px;
+  outline: none;
+  transition: border-color .2s;
+}
+.u-input:focus { border-color: var(--navy); }
+
+/* ============================
+   BUTTONS
+============================ */
+.btn {
+  display: inline-flex;
+  align-items: center; gap: 5px;
+  padding: 8px 16px;
+  border-radius: var(--r2);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; border: none;
+  font-family: inherit;
+  transition: transform .1s, box-shadow .2s, background .15s;
+}
+.btn:active { transform: scale(.97); }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy3); }
+.btn-gold { background: linear-gradient(135deg, var(--gold2), var(--gold)); color: #fff; box-shadow: 0 2px 10px rgba(245,166,35,.35); }
+.btn-gold:hover { box-shadow: 0 4px 16px rgba(245,166,35,.5); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+.btn-refresh {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  margin-left: 8px;
+}
+.btn-refresh:hover { background: rgba(255,255,255,.2); }
+
+/* ============================
+   NOT STARTED CARD
+============================ */
+.not-started {
+  background: linear-gradient(135deg, var(--navy), var(--navy3));
+  color: #fff;
+  border-radius: var(--r);
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.not-started .emoji { font-size: 56px; display: block; margin-bottom: 12px; }
+.not-started h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+.not-started p { opacity: .75; font-size: 14px; }
+
+/* ============================
+   EMPTY / NO DATA
+============================ */
+.empty { text-align: center; padding: 32px 20px; color: var(--muted); }
+.empty .e { font-size: 44px; display: block; margin-bottom: 10px; }
+.no-sheet {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: var(--r2);
+  padding: 14px 18px;
+  font-size: 13px;
+  color: #665a00;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 640px) {
+  .main { padding: 12px; }
+  .groups-grid { grid-template-columns: 1fr; }
+  .brands-grid { grid-template-columns: 1fr 1fr; }
+  .stats-row  { grid-template-columns: 1fr 1fr; }
+  .big-pct { font-size: 42px; }
+  .login-card { padding: 36px 24px; }
+  .login-title { font-size: 32px; }
+  .header-username { display: none; }
+  .user-table { font-size: 12px; }
+  .u-input { width: 90px; }
+  .vh-rank-num { font-size: 32px; }
+}
+@media (max-width: 400px) {
+  .brands-grid { grid-template-columns: 1fr; }
+  .wdot { width: 24px; height: 24px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========= LOGIN ========= -->
+<div id="loginScreen">
+  <div class="login-card">
+    <span class="login-ball">⚽</span>
+    <div class="login-title">COPA ÉLITE 2026</div>
+    <div class="login-sub">¡Vende como campeón, gana como leyenda!</div>
+    <input type="text"     id="lUser" placeholder="Usuario"     autocomplete="username" />
+    <input type="password" id="lPass" placeholder="Contraseña"  autocomplete="current-password" />
+    <button class="btn-login" onclick="doLogin()">⚡ INGRESAR</button>
+    <div class="login-err" id="loginErr">❌ Usuario o contraseña incorrectos</div>
+    <div class="login-footer">
+      📅 1 de junio – 30 de junio de 2026<br>
+      🏆 3 televisores 32" en juego · 🎁 Anchetas para mejores clientes
+    </div>
+  </div>
+</div>
+
+<!-- ========= LOADING ========= -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px">Cargando datos…</div>
+  <div style="font-size:13px;opacity:.6;margin-top:4px">Conectando con el campo de juego ⚽</div>
+</div>
+
+<!-- ========= APP ========= -->
+<div id="app">
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="ball">⚽</span>
+        <div class="brand-text">
+          <h1>COPA ÉLITE 2026</h1>
+          <small>¡Vende como campeón!</small>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="role-chip" id="hRole">—</span>
+        <span class="header-username" id="hUser">—</span>
+        <button class="btn-refresh" onclick="refreshData()" title="Actualizar datos">🔄</button>
+        <button class="btn-logout" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+    <div class="campaign-strip">
+      <div class="campaign-strip-inner">
+        <span class="camp-label" id="campLabel">⚽ Campaña</span>
+        <div class="camp-bar"><div class="camp-bar-fill" id="campFill" style="width:0%"></div></div>
+        <span class="camp-days" id="campDays">—</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+
+  <div class="main">
+
+    <!-- ADMIN VIEW -->
+    <div class="view" id="vAdmin">
+      <div class="tabs">
+        <button class="tab active" id="tResumen" onclick="aTab('Resumen')">📊 Resumen</button>
+        <button class="tab"        id="tGrupos"  onclick="aTab('Grupos')">👥 Grupos</button>
+        <button class="tab"        id="tUsuarios" onclick="aTab('Usuarios')">⚙️ Usuarios</button>
+      </div>
+      <div id="atResumen"></div>
+      <div id="atGrupos"   style="display:none"></div>
+      <div id="atUsuarios" style="display:none"></div>
+    </div>
+
+    <!-- COORD VIEW -->
+    <div class="view" id="vCoord"></div>
+
+    <!-- VENDOR VIEW -->
+    <div class="view" id="vVendor"></div>
+
+    <!-- DETAIL DRILL-DOWN -->
+    <div class="view" id="vDetail"></div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+/* ============================================================
+   ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+  ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+  ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+  ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+  ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+   ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+   COPA ÉLITE 2026 — Dashboard
+============================================================ */
+
+/* ============================================================
+   CONFIGURACIÓN
+   ↓ Edita estos valores con los datos de tu Google Sheets
+============================================================ */
+const SHEET_ID = 'TU_SHEET_ID_AQUI';
+/* Cómo obtener el ID:
+   URL de tu Sheets: https://docs.google.com/spreadsheets/d/[ESTE_ES_EL_ID]/edit
+   Copia el segmento entre /d/ y /edit y pégalo arriba. */
+
+const SHEET_VENDEDORES = 'VENDEDORES'; // Nombre exacto de la pestaña
+const SHEET_CLIENTES   = 'CLIENTES';   // Nombre exacto de la pestaña
+
+/* Columnas en la hoja VENDEDORES y CLIENTES
+   Los encabezados de tu Sheets deben ser EXACTAMENTE estos: */
+const META_COLS  = ['M_YOGURT','M_COCADA','M_POMGUR','M_COSMIC','M_YOMAX','M_AREQUIPE'];
+const VENTA_COLS = ['YOGURT',  'COCADA',  'POMGUR',  'COSMIC',  'YOMAX',  'AREQUIPE'];
+const BRAND_NAMES = ['Yogurt Gourmet','Cocada','Pomgur','Cosmic','Yomax','Arequipe'];
+
+/* Grupos */
+const GRUPOS = {
+  'A_TAT': 'Autoventas TAT',
+  'P_MZL': 'Preventa Manizales',
+  'P_PER': 'Preventa Pereira',
+};
+
+/* Campaña */
+const C_START = new Date('2026-06-01T00:00:00');
+const C_END   = new Date('2026-06-30T23:59:59');
+const PRIZE   = '📺 Televisor 32" ($850.000 COP)';
+
+/* ============================================================
+   USUARIOS
+   El admin puede cambiar contraseñas en el panel y
+   descargar el HTML actualizado para subir a GitHub.
+============================================================ */
+let USERS = [
+  { rol:'admin',       usuario:'admin',      filtro:'',      clave:'admin2026'  },
+  { rol:'coordinador', usuario:'coord_tat',  filtro:'A_TAT', clave:'tat2026'    },
+  { rol:'coordinador', usuario:'coord_mzl',  filtro:'P_MZL', clave:'mzl2026'    },
+  { rol:'coordinador', usuario:'coord_per',  filtro:'P_PER', clave:'per2026'    },
+  { rol:'vendedor', usuario:'A_CEC',  filtro:'A_CEC',  clave:'1111' },
+  { rol:'vendedor', usuario:'A_MGM',  filtro:'A_MGM',  clave:'2222' },
+  { rol:'vendedor', usuario:'A_NOC',  filtro:'A_NOC',  clave:'3333' },
+  { rol:'vendedor', usuario:'A_NOT',  filtro:'A_NOT',  clave:'4444' },
+  { rol:'vendedor', usuario:'A_NOV',  filtro:'A_NOV',  clave:'5555' },
+  { rol:'vendedor', usuario:'A_OCC1', filtro:'A_OCC1', clave:'6666' },
+  { rol:'vendedor', usuario:'A_OCC2', filtro:'A_OCC2', clave:'7777' },
+  { rol:'vendedor', usuario:'A_ORC',  filtro:'A_ORC',  clave:'8888' },
+  { rol:'vendedor', usuario:'A_QUI',  filtro:'A_QUI',  clave:'9999' },
+  { rol:'vendedor', usuario:'A_RIS',  filtro:'A_RIS',  clave:'1010' },
+  { rol:'vendedor', usuario:'A_SOA',  filtro:'A_SOA',  clave:'1011' },
+  { rol:'vendedor', usuario:'P_MZL1', filtro:'P_MZL1', clave:'2001' },
+  { rol:'vendedor', usuario:'P_MZL2', filtro:'P_MZL2', clave:'2002' },
+  { rol:'vendedor', usuario:'P_MZL3', filtro:'P_MZL3', clave:'2003' },
+  { rol:'vendedor', usuario:'P_MZL4', filtro:'P_MZL4', clave:'2004' },
+  { rol:'vendedor', usuario:'P_MZL5', filtro:'P_MZL5', clave:'2005' },
+  { rol:'vendedor', usuario:'P_MZL6', filtro:'P_MZL6', clave:'2006' },
+  { rol:'vendedor', usuario:'P_CAR1', filtro:'P_CAR1', clave:'3001' },
+  { rol:'vendedor', usuario:'P_PER1', filtro:'P_PER1', clave:'3002' },
+  { rol:'vendedor', usuario:'P_PER2', filtro:'P_PER2', clave:'3003' },
+  { rol:'vendedor', usuario:'P_PER3', filtro:'P_PER3', clave:'3004' },
+  { rol:'vendedor', usuario:'P_PER4', filtro:'P_PER4', clave:'3005' },
+  { rol:'vendedor', usuario:'P_PER5', filtro:'P_PER5', clave:'3006' },
+  { rol:'vendedor', usuario:'P_PER6', filtro:'P_PER6', clave:'3007' },
+  { rol:'vendedor', usuario:'P_QUI1', filtro:'P_QUI1', clave:'3008' },
+];
+
+/* ============================================================
+   STATE
+============================================================ */
+const S = {
+  user: null,
+  vd: [],   // vendedores data
+  cd: [],   // clientes data
+  drill: { group: null, vendor: null },
+  adminTab: 'Resumen',
+};
+
+/* ============================================================
+   UTILS
+============================================================ */
+function n(v) {
+  if (!v || v === '-') return 0;
+  let s = String(v).trim().replace(/\s/g,'').replace(/"/g,'');
+  if (/^\d{1,3}(\.\d{3})*(,\d*)?$/.test(s)) s = s.replace(/\./g,'').replace(',','.');
+  else if (/^\d+,\d+$/.test(s)) s = s.replace(',','.');
+  return parseFloat(s) || 0;
+}
+
+function parseLine(line) {
+  const r = []; let cur = '', inQ = false;
+  for (const c of line) {
+    if (c === '"') { inQ = !inQ; continue; }
+    if (c === ',' && !inQ) { r.push(cur); cur = ''; }
+    else cur += c;
+  }
+  r.push(cur); return r;
+}
+
+function parseCSV(txt) {
+  const lines = txt.replace(/\r/g,'').trim().split('\n');
+  if (lines.length < 2) return [];
+  const hdrs = parseLine(lines[0]).map(h => h.trim());
+  return lines.slice(1).filter(l => l.trim()).map(line => {
+    const vals = parseLine(line);
+    const obj = {};
+    hdrs.forEach((h,i) => { obj[h] = (vals[i]||'').trim(); });
+    return obj;
+  });
+}
+
+function csvURL(sheet) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheet)}`;
+}
+
+function compliance(rows) {
+  let totM = 0, totV = 0;
+  const brands = META_COLS.map((mc,i) => {
+    const m = rows.reduce((s,r) => s + n(r[mc]), 0);
+    const v = rows.reduce((s,r) => s + n(r[VENTA_COLS[i]]), 0);
+    totM += m; totV += v;
+    return { name: BRAND_NAMES[i], meta: m, venta: v, pct: m > 0 ? v/m*100 : 0 };
+  });
+  return { totM, totV, pct: totM > 0 ? totV/totM*100 : 0, brands };
+}
+
+function colClass(pct) {
+  if (pct >= 100) return 'c-green';
+  if (pct >= 80)  return 'c-gold';
+  if (pct >= 60)  return 'c-orange';
+  return 'c-red';
+}
+
+function badge(pct) {
+  const cc = colClass(pct);
+  const label = pct >= 100 ? '🏆 Campeón' : pct >= 80 ? '🔥 En carrera' : pct >= 60 ? '⚠️ Atención' : '🚨 Riesgo';
+  return `<span class="badge ${cc.replace('c-','b-')}">${label}</span>`;
+}
+
+function fp(v) { return `${v.toFixed(1)}%`; }
+function fn(v) { return Math.round(v).toLocaleString('es-CO'); }
+
+function campInfo() {
+  const now = new Date();
+  const total = (C_END - C_START) / 86400000;
+  const elapsed = Math.max(0, Math.min(total, (now - C_START) / 86400000));
+  const rem = Math.max(0, (C_END - now) / 86400000);
+  return {
+    pct:       Math.min(100, Math.round(elapsed / total * 100)),
+    remaining: Math.ceil(rem),
+    notStarted: now < C_START,
+    ended:      now > C_END,
+    week:       Math.min(4, Math.max(0, Math.floor(elapsed / 7) + 1)),
+  };
+}
+
+function groupRanking(grupo) {
+  const vs = [...new Set(S.vd.filter(r => r.GRUPO === grupo).map(r => r.VENDEDOR))];
+  return vs.map(v => {
+    const rows = S.vd.filter(r => r.VENDEDOR === v);
+    const c = compliance(rows);
+    return { v, ...c };
+  }).sort((a,b) => b.pct - a.pct);
+}
+
+function groupWinner(grupo) {
+  return groupRanking(grupo).find(r => r.pct >= 100) || null;
+}
+
+function noSheetConfigured() {
+  return SHEET_ID === 'TU_SHEET_ID_AQUI';
+}
+
+/* ============================================================
+   DATA LOADING
+============================================================ */
+async function loadData() {
+  if (noSheetConfigured()) { S.vd = []; S.cd = []; return; }
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  try {
+    const [vt, ct] = await Promise.all([
+      fetch(csvURL(SHEET_VENDEDORES)).then(r => r.text()),
+      fetch(csvURL(SHEET_CLIENTES)).then(r => r.text()),
+    ]);
+    S.vd = parseCSV(vt);
+    S.cd = parseCSV(ct);
+  } catch(e) {
+    console.error('Error loading sheets:', e);
+    S.vd = []; S.cd = [];
+  } finally {
+    document.getElementById('loadingOverlay').style.display = 'none';
+  }
+}
+
+async function refreshData() {
+  await loadData();
+  render();
+}
+
+/* ============================================================
+   AUTH
+============================================================ */
+function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const p = document.getElementById('lPass').value.trim();
+  const found = USERS.find(x => x.usuario === u && x.clave === p);
+  if (!found) {
+    const e = document.getElementById('loginErr');
+    e.style.display = 'block';
+    setTimeout(() => { e.style.display = 'none'; }, 3000);
+    return;
+  }
+  S.user = found;
+  S.drill = { group: null, vendor: null };
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('hRole').textContent = found.rol.toUpperCase();
+  document.getElementById('hUser').textContent = found.usuario;
+  updateCampBar();
+  loadData().then(render);
+}
+
+function doLogout() {
+  S.user = null;
+  S.drill = { group: null, vendor: null };
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('lUser').value = '';
+  document.getElementById('lPass').value = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') doLogin();
+});
+
+/* ============================================================
+   CAMPAIGN BAR
+============================================================ */
+function updateCampBar() {
+  const ci = campInfo();
+  const lbl  = document.getElementById('campLabel');
+  const fill = document.getElementById('campFill');
+  const days = document.getElementById('campDays');
+  if (ci.notStarted) {
+    const d = Math.ceil((C_START - new Date()) / 86400000);
+    lbl.textContent  = '⏳ Campaña no iniciada';
+    fill.style.width = '0%';
+    days.textContent = `Inicia en ${d} días`;
+  } else if (ci.ended) {
+    lbl.textContent  = '🏁 Campaña finalizada';
+    fill.style.width = '100%';
+    days.textContent = '¡Resultados finales!';
+  } else {
+    lbl.textContent  = `⚽ Semana ${ci.week} de 4`;
+    fill.style.width = `${ci.pct}%`;
+    days.textContent = `${ci.remaining} días restantes`;
+  }
+}
+
+/* ============================================================
+   NAVIGATION / RENDER
+============================================================ */
+function render() {
+  if (!S.user) return;
+  const { user, drill } = S;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+  // Drill-down detail view
+  if (drill.vendor && (user.rol === 'admin' || user.rol === 'coordinador')) {
+    renderDetailVendor(drill.vendor, drill.group);
+    document.getElementById('vDetail').classList.add('active');
+    updateBreadcrumb();
+    window.scrollTo(0,0);
+    return;
+  }
+  if (drill.group && user.rol === 'admin') {
+    renderDetailGroup(drill.group);
+    document.getElementById('vDetail').classList.add('active');
+    updateBreadcrumb();
+    window.scrollTo(0,0);
+    return;
+  }
+
+  if      (user.rol === 'admin')        { document.getElementById('vAdmin').classList.add('active');  renderAdmin(); }
+  else if (user.rol === 'coordinador')  { document.getElementById('vCoord').classList.add('active');  renderCoord(); }
+  else                                  { document.getElementById('vVendor').classList.add('active'); renderVendor(); }
+
+  updateBreadcrumb();
+  window.scrollTo(0,0);
+}
+
+function drillGroup(g)     { S.drill.group = g; S.drill.vendor = null; render(); }
+function drillVendor(v, g) { S.drill.group = g; S.drill.vendor = v;    render(); }
+function backToTop()       { S.drill.group = null; S.drill.vendor = null; render(); }
+function backToGroup()     { S.drill.vendor = null; render(); }
+
+function updateBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  const { user, drill } = S;
+  let html = '';
+
+  if (user.rol === 'admin') {
+    html += `<span class="bc-item" onclick="backToTop()">🏠 Inicio</span>`;
+    if (drill.group) {
+      html += `<span class="bc-sep"> › </span>`;
+      if (drill.vendor) {
+        html += `<span class="bc-item" onclick="backToGroup()">${GRUPOS[drill.group]||drill.group}</span>`;
+        html += `<span class="bc-sep"> › </span><span class="bc-current">🧑 ${drill.vendor}</span>`;
+      } else {
+        html += `<span class="bc-current">${GRUPOS[drill.group]||drill.group}</span>`;
+      }
+    }
+  } else if (user.rol === 'coordinador') {
+    const g = user.filtro;
+    html += `<span class="bc-item" onclick="backToTop()">🏠 ${GRUPOS[g]||g}</span>`;
+    if (drill.vendor) {
+      html += `<span class="bc-sep"> › </span><span class="bc-current">🧑 ${drill.vendor}</span>`;
+    }
+  } else {
+    html += `<span class="bc-current">🧑 ${user.filtro}</span>`;
+  }
+
+  bc.innerHTML = html;
+}
+
+/* ============================================================
+   ADMIN VIEW
+============================================================ */
+function aTab(tab) {
+  S.adminTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`t${tab}`).classList.add('active');
+  ['Resumen','Grupos','Usuarios'].forEach(t => {
+    document.getElementById(`at${t}`).style.display = t === tab ? '' : 'none';
+  });
+}
+
+function renderAdmin() {
+  S.drill.group = null; S.drill.vendor = null;
+  renderAdminResumen();
+  renderAdminGrupos();
+  renderAdminUsuarios();
+  // Reset to active tab
+  ['Resumen','Grupos','Usuarios'].forEach(t => {
+    document.getElementById(`at${t}`).style.display = t === S.adminTab ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`t${S.adminTab}`).classList.add('active');
+}
+
+function renderAdminResumen() {
+  const el = document.getElementById('atResumen');
+  const ci = campInfo();
+  let html = '';
+
+  if (noSheetConfigured()) {
+    html += `<div class="no-sheet">⚙️ <strong>Configura tu Google Sheets:</strong><br>
+    Abre el archivo HTML en un editor de texto, busca la variable <code>SHEET_ID</code> y reemplaza <code>'TU_SHEET_ID_AQUI'</code> con el ID de tu spreadsheet.<br>
+    Luego asegúrate de que las pestañas se llamen exactamente <code>${SHEET_VENDEDORES}</code> y <code>${SHEET_CLIENTES}</code>, y que el spreadsheet esté publicado como CSV.</div>`;
+  }
+
+  if (ci.notStarted) {
+    const d = Math.ceil((C_START - new Date()) / 86400000);
+    html += `<div class="not-started"><span class="emoji">⏳</span><h2>La campaña inicia en ${d} días</h2><p>1 de junio de 2026 · ¡Prepara a tu equipo campeón!</p></div>`;
+  }
+
+  // Overall stats
+  const allV = [...new Set(S.vd.map(r => r.VENDEDOR))];
+  const at100 = allV.filter(v => {
+    const rows = S.vd.filter(r => r.VENDEDOR === v);
+    return compliance(rows).pct >= 100;
+  }).length;
+  const ov = S.vd.length ? compliance(S.vd) : { pct: 0, totV: 0, totM: 0 };
+
+  html += `<div class="stats-row">
+    <div class="stat"><div class="stat-val ${colClass(ov.pct)}">${fp(ov.pct)}</div><div class="stat-lbl">Cumplimiento General</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${at100}</div><div class="stat-lbl">Vendedores ≥ 100%</div></div>
+    <div class="stat"><div class="stat-val">${allV.length}</div><div class="stat-lbl">Total Vendedores</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--gold)">3</div><div class="stat-lbl">Grupos</div></div>
+  </div>`;
+
+  // Group cards
+  html += '<div class="groups-grid">';
+  Object.entries(GRUPOS).forEach(([g, name]) => {
+    const rows = S.vd.filter(r => r.GRUPO === g);
+    const c = rows.length ? compliance(rows) : { pct: 0 };
+    const cc = colClass(c.pct);
+    const winner = groupWinner(g);
+    html += `<div class="group-card ${cc}" onclick="drillGroup('${g}')">
+      <div class="group-code">${g}</div>
+      <div class="group-name">${name}</div>
+      <div class="big-pct ${cc}">${fp(c.pct)}</div>
+      ${badge(c.pct)}
+      ${winner ? `<div class="group-leader" style="margin-top:8px">🏆 Líder: <strong>${winner.v}</strong> · ${fp(winner.pct)}</div>` : ''}
+      <div class="group-action" style="margin-top:10px">Ver ranking →</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+function renderAdminGrupos() {
+  const el = document.getElementById('atGrupos');
+  let html = '';
+  Object.entries(GRUPOS).forEach(([g, name]) => {
+    html += `<div class="card">
+      <div class="card-title">👥 ${name} <span style="color:var(--muted);font-size:14px;font-weight:500">· ${g}</span></div>
+      ${rankingHTML(g, true)}
+    </div>`;
+  });
+  el.innerHTML = html || '<div class="empty"><span class="e">📭</span>Sin datos disponibles</div>';
+}
+
+function renderAdminUsuarios() {
+  document.getElementById('atUsuarios').innerHTML = userMgmtHTML();
+}
+
+/* ============================================================
+   COORDINATOR VIEW
+============================================================ */
+function renderCoord() {
+  S.drill.vendor = null;
+  const g     = S.user.filtro;
+  const name  = GRUPOS[g] || g;
+  const rows  = S.vd.filter(r => r.GRUPO === g);
+  const c     = rows.length ? compliance(rows) : { pct: 0, totV: 0, totM: 0 };
+  const cc    = colClass(c.pct);
+  const winner = groupWinner(g);
+
+  let html = `
+    <div class="card" style="border-left:5px solid var(--${cc.replace('c-','')})">
+      <div class="card-title">📊 Mi Grupo — ${name}</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-val ${cc}">${fp(c.pct)}</div><div class="stat-lbl">Cumplimiento</div></div>
+        <div class="stat"><div class="stat-val">${fn(c.totV)}</div><div class="stat-lbl">Uds. vendidas</div></div>
+        <div class="stat"><div class="stat-val">${fn(c.totM)}</div><div class="stat-lbl">Meta total</div></div>
+      </div>
+      ${winner ? `<div class="winner-banner"><span class="trophy">🏆</span><div><h3>Líder actual: ${winner.v}</h3><p>${fp(winner.pct)} · ${PRIZE}</p></div></div>` : `<div class="no-winner">📺 El televisor aún está disponible — ¡ningún vendedor ha llegado al 100%!</div>`}
+    </div>
+    <div class="card">
+      <div class="card-title">🏅 Ranking de Vendedores</div>
+      ${rankingHTML(g, true)}
+    </div>`;
+
+  document.getElementById('vCoord').innerHTML = html;
+}
+
+/* ============================================================
+   VENDOR VIEW
+============================================================ */
+function renderVendor() {
+  const vend   = S.user.filtro;
+  const rows   = S.vd.filter(r => r.VENDEDOR === vend);
+  const c      = rows.length ? compliance(rows) : { pct: 0, totV: 0, totM: 0, brands: [] };
+  const cc     = colClass(c.pct);
+  const ci     = campInfo();
+  const grupoRow = S.vd.find(r => r.VENDEDOR === vend);
+  const g      = grupoRow ? grupoRow.GRUPO : '';
+  const rank   = groupRanking(g);
+  const myPos  = rank.findIndex(r => r.v === vend) + 1;
+  const total  = rank.length;
+
+  let html = `
+    <div class="vendor-hero">
+      <div class="vh-top">
+        <div>
+          <div class="vh-name">${vend}</div>
+          <div class="vh-group">${GRUPOS[g]||g}</div>
+        </div>
+        ${myPos > 0 ? `<div class="vh-rank"><div class="vh-rank-num">#${myPos}</div><div class="vh-rank-sub">de ${total} vendedores</div></div>` : ''}
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;opacity:.8">
+        <span>Cumplimiento General</span>
+        <span style="font-family:'Barlow Condensed';font-size:22px;font-weight:900;color:${c.pct>=100?'var(--green)':c.pct>=80?'var(--gold)':c.pct>=60?'var(--orange)':'var(--red)'}">${fp(c.pct)}</span>
+      </div>
+      <div class="vh-progress-bar">
+        <div class="vh-progress-fill ${cc}" style="width:${Math.min(100,c.pct)}%"></div>
+      </div>
+      <div class="vh-labels">
+        <span>${fn(c.totV)} uds vendidas</span>
+        <span>Meta: ${fn(c.totM)} uds</span>
+      </div>
+      ${c.pct < 100 && c.totM > 0 ? `<div style="margin-top:10px;font-size:13px;opacity:.75">Faltan <strong>${fn(c.totM - c.totV)} uds</strong> para llegar al 100%</div>` : ''}
+      ${c.pct >= 100 ? `<div class="vh-prize">🏆 ¡Estás en carrera por el ${PRIZE}!</div>` : ''}
+      <div style="margin-top:10px">${badge(c.pct)}</div>
+    </div>`;
+
+  // Brands
+  if (c.brands && c.brands.length) {
+    html += `<div class="card"><div class="card-title">📦 Cumplimiento por Marca</div><div class="brands-grid">`;
+    c.brands.forEach(b => {
+      const bc = colClass(b.pct);
+      html += `<div class="brand-card ${bc}">
+        <div class="brand-n">${b.name}</div>
+        <div class="brand-pct ${bc}">${fp(b.pct)}</div>
+        <div class="prog-track" style="height:6px;margin-bottom:4px"><div class="prog-fill ${bc}" style="width:${Math.min(100,b.pct)}%"></div></div>
+        <div class="brand-vals">${fn(b.venta)} / ${fn(b.meta)} uds</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // Clients
+  const clients = [...new Set(S.cd.filter(r => r.VENDEDOR === vend).map(r => r.CLIENTE))];
+  if (clients.length) {
+    html += `<div class="card"><div class="card-title">🏪 Mis Clientes (${clients.length}) — Tracker 4 Semanas</div>`;
+    html += clientListHTML(vend, ci.week);
+    html += `</div>`;
+  }
+
+  document.getElementById('vVendor').innerHTML = html;
+}
+
+/* ============================================================
+   DETAIL: GROUP (admin drill-down)
+============================================================ */
+function renderDetailGroup(g) {
+  const name   = GRUPOS[g] || g;
+  const rows   = S.vd.filter(r => r.GRUPO === g);
+  const c      = rows.length ? compliance(rows) : { pct: 0, totV: 0, totM: 0 };
+  const cc     = colClass(c.pct);
+  const winner = groupWinner(g);
+
+  let html = `
+    <div class="card">
+      <div class="card-title">📊 ${name}</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-val ${cc}">${fp(c.pct)}</div><div class="stat-lbl">Cumplimiento</div></div>
+        <div class="stat"><div class="stat-val">${fn(c.totV)}</div><div class="stat-lbl">Uds. vendidas</div></div>
+        <div class="stat"><div class="stat-val">${fn(c.totM)}</div><div class="stat-lbl">Meta total</div></div>
+      </div>
+      ${winner ? `<div class="winner-banner"><span class="trophy">🏆</span><div><h3>Líder: ${winner.v}</h3><p>${fp(winner.pct)} · ${PRIZE}</p></div></div>`
+               : `<div class="no-winner">📺 Televisor disponible — ¡ningún vendedor ha llegado al 100%!</div>`}
+    </div>
+    <div class="card">
+      <div class="card-title">🏅 Ranking — ${name}</div>
+      ${rankingHTML(g, true)}
+    </div>`;
+
+  document.getElementById('vDetail').innerHTML = html;
+}
+
+/* ============================================================
+   DETAIL: VENDOR (admin & coord drill-down)
+============================================================ */
+function renderDetailVendor(vend, g) {
+  const rows  = S.vd.filter(r => r.VENDEDOR === vend);
+  const c     = rows.length ? compliance(rows) : { pct: 0, totV: 0, totM: 0, brands: [] };
+  const cc    = colClass(c.pct);
+  const ci    = campInfo();
+  const rank  = groupRanking(g);
+  const myPos = rank.findIndex(r => r.v === vend) + 1;
+  const total = rank.length;
+
+  let html = `
+    <div class="card" style="border-left:5px solid var(--${cc.replace('c-','')})">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-family:'Barlow Condensed';font-size:26px;font-weight:900">${vend}</div>
+          <div style="font-size:13px;color:var(--muted)">${GRUPOS[g]||g}</div>
+        </div>
+        ${myPos > 0 ? `<div style="text-align:center"><div style="font-family:'Barlow Condensed';font-size:38px;font-weight:900;line-height:1" class="${cc}">#${myPos}</div><div style="font-size:11px;color:var(--muted)">de ${total}</div></div>` : ''}
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-labels"><span>Cumplimiento General</span><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:900;color:var(--${cc.replace('c-','')})">${fp(c.pct)}</span></div>
+        <div class="prog-track"><div class="prog-fill ${cc}" style="width:${Math.min(100,c.pct)}%"></div></div>
+        <div class="prog-sub">${fn(c.totV)} / ${fn(c.totM)} unidades</div>
+      </div>
+      ${badge(c.pct)}
+    </div>`;
+
+  if (c.brands && c.brands.length) {
+    html += `<div class="card"><div class="card-title">📦 Detalle por Marca</div><div class="brands-grid">`;
+    c.brands.forEach(b => {
+      const bc = colClass(b.pct);
+      html += `<div class="brand-card ${bc}">
+        <div class="brand-n">${b.name}</div>
+        <div class="brand-pct ${bc}">${fp(b.pct)}</div>
+        <div class="prog-track" style="height:6px;margin-bottom:4px"><div class="prog-fill ${bc}" style="width:${Math.min(100,b.pct)}%"></div></div>
+        <div class="brand-vals">${fn(b.venta)} / ${fn(b.meta)} uds</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  const clients = [...new Set(S.cd.filter(r => r.VENDEDOR === vend).map(r => r.CLIENTE))];
+  if (clients.length) {
+    html += `<div class="card"><div class="card-title">🏪 Clientes de ${vend} (${clients.length})</div>`;
+    html += clientListHTML(vend, ci.week);
+    html += `</div>`;
+  } else {
+    html += `<div class="card"><div class="empty"><span class="e">📭</span>Sin datos de clientes</div></div>`;
+  }
+
+  document.getElementById('vDetail').innerHTML = html;
+}
+
+/* ============================================================
+   COMPONENT: RANKING HTML
+============================================================ */
+function rankingHTML(g, clickable) {
+  const rank   = groupRanking(g);
+  const winner = rank.find(r => r.pct >= 100);
+  if (!rank.length) return '<div class="empty"><span class="e">📭</span>Sin datos</div>';
+
+  let html = winner
+    ? `<div class="winner-banner"><span class="trophy">🏆</span><div><h3>Líder: ${winner.v}</h3><p>${fp(winner.pct)} · ${PRIZE}</p></div></div>`
+    : `<div class="no-winner">📺 El televisor sigue disponible — ¡llega al 100%!</div>`;
+
+  html += '<ul class="rank-list">';
+  rank.forEach((item, i) => {
+    const pos   = i + 1;
+    const pc    = pos === 1 ? 'p1' : pos === 2 ? 'p2' : pos === 3 ? 'p3' : 'px';
+    const cc    = colClass(item.pct);
+    const click = clickable ? `data-v="${item.v}" data-g="${g}" onclick="drillVendor(this.dataset.v, this.dataset.g)"` : '';
+    html += `<li class="rank-item" ${click}>
+      <div class="rank-num ${pc}">${pos}</div>
+      <div class="rank-info">
+        <div class="rank-name">${item.v} ${item.pct >= 100 ? '🏆' : ''}</div>
+        <div class="rank-bar"><div class="rank-bar-fill" style="width:${Math.min(100,item.pct)}%;background:var(--${cc.replace('c-','')})"></div></div>
+      </div>
+      <div class="rank-pct" style="color:var(--${cc.replace('c-','')})">${fp(item.pct)}</div>
+      ${clickable ? '<span class="rank-arrow">›</span>' : ''}
+    </li>`;
+  });
+  html += '</ul>';
+  return html;
+}
+
+/* ============================================================
+   COMPONENT: CLIENT LIST HTML
+============================================================ */
+function clientListHTML(vend, currentWeek) {
+  const clients = [...new Set(S.cd.filter(r => r.VENDEDOR === vend).map(r => r.CLIENTE))];
+  if (!clients.length) return '<div class="empty"><span class="e">📭</span>Sin clientes registrados</div>';
+
+  const data = clients.map(cl => {
+    const allRows = S.cd.filter(r => r.VENDEDOR === vend && r.CLIENTE === cl);
+    const c = compliance(allRows);
+    const weeks = [1,2,3,4].map(w => {
+      if (w > currentWeek) return { w, status:'pending' };
+      const wr = S.cd.filter(r => r.VENDEDOR === vend && r.CLIENTE === cl && parseInt(r.SEMANA) === w);
+      if (!wr.length) return { w, status:'pending' };
+      const wc = compliance(wr);
+      return { w, status: wc.pct >= 100 ? 'win' : 'lose', pct: wc.pct };
+    });
+    const allWin = weeks.slice(0, currentWeek).every(w => w.status === 'win') && currentWeek === 4 && weeks[3].status === 'win';
+    let streak = 0;
+    for (const w of weeks) {
+      if (w.status === 'win') streak++;
+      else if (w.status === 'lose') streak = 0;
+      else break;
+    }
+    return { cl, c, weeks, allWin, streak };
+  }).sort((a,b) => b.c.pct - a.c.pct);
+
+  let html = '';
+  data.forEach(d => {
+    const cc = colClass(d.c.pct);
+    const dots = d.weeks.map(w => {
+      const lbl = w.status === 'win' ? '✓' : w.status === 'lose' ? '✗' : w.w;
+      const cls = w.w === currentWeek && w.status === 'pending' ? 'active' : w.status;
+      return `<div class="wdot ${cls}" title="Sem ${w.w}${w.pct ? ' — '+fp(w.pct) : ''}">${lbl}</div>`;
+    }).join('');
+    const extra = d.allWin ? `<span style="font-size:12px;color:var(--green);font-weight:700;margin-left:6px">🎁 ¡Gana ancheta!</span>`
+                           : d.streak > 0 ? `<span class="week-label">${d.streak}/4 semanas</span>` : '';
+    html += `<div class="client-row">
+      <div class="client-name-col">
+        <div class="cn">${d.cl}</div>
+        <div class="week-tracker">${dots}${extra}</div>
+      </div>
+      <div class="client-pct-col" style="color:var(--${cc.replace('c-','')})">${fp(d.c.pct)}</div>
+    </div>`;
+  });
+  return html;
+}
+
+/* ============================================================
+   USER MANAGEMENT
+============================================================ */
+function userMgmtHTML() {
+  let rows = '';
+  USERS.forEach((u, i) => {
+    rows += `<tr>
+      <td><span class="role-tag ${u.rol}">${u.rol}</span></td>
+      <td><strong>${u.usuario}</strong></td>
+      <td style="color:var(--muted)">${u.filtro || '—'}</td>
+      <td><input class="u-input" id="up_${i}" type="text" value="${u.clave}"></td>
+      <td><button class="btn btn-navy btn-sm" id="ubtn_${i}" onclick="savePass(${i})">Guardar</button></td>
+    </tr>`;
+  });
+
+  return `
+    <div class="user-mgmt-header">
+      <div class="card-title" style="margin:0">⚙️ Gestión de Usuarios</div>
+      <button class="btn btn-gold" onclick="downloadHTML()">⬇️ Descargar HTML actualizado</button>
+    </div>
+    <div class="info-box">
+      Cambia la contraseña y haz clic en <strong>Guardar</strong>. Los cambios son inmediatos en este dispositivo.<br>
+      Para que apliquen en <strong>todos los dispositivos</strong>, descarga el HTML y súbelo a GitHub Pages.
+    </div>
+    <div style="overflow-x:auto">
+      <table class="user-table">
+        <thead><tr><th>ROL</th><th>USUARIO</th><th>FILTRO</th><th>CONTRASEÑA</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div style="margin-top:28px">
+      <div class="card-title" style="margin-bottom:12px">🔗 Configuración de Google Sheets</div>
+      <div class="info-box blue">
+        <strong>1. Obtener el Spreadsheet ID:</strong><br>
+        Abre tu Google Sheets. La URL tiene el formato:<br>
+        <code>https://docs.google.com/spreadsheets/d/<strong>[ESTE-ES-EL-ID]</strong>/edit</code><br>
+        Copia el texto entre <code>/d/</code> y <code>/edit</code> y reemplaza <code>SHEET_ID</code> en el HTML.<br><br>
+        <strong>2. Publicar el Sheets como CSV:</strong><br>
+        Archivo → Compartir → Publicar en la web → selecciona cada pestaña → formato CSV → Publicar.<br><br>
+        <strong>3. Nombres de pestañas requeridos (exactos):</strong><br>
+        · Vendedores: <code>${SHEET_VENDEDORES}</code> &nbsp; · Clientes: <code>${SHEET_CLIENTES}</code><br><br>
+        <strong>4. Columnas requeridas en ambas hojas:</strong><br>
+        · En VENDEDORES: <code>GRUPO, VENDEDOR</code><br>
+        · En CLIENTES: <code>VENDEDOR, CLIENTE</code><br>
+        · Metas: <code>${META_COLS.join(', ')}</code><br>
+        · Ventas: <code>${VENTA_COLS.join(', ')}</code><br>
+        · <code>SEMANA</code> (número 1-4)
+      </div>
+    </div>`;
+}
+
+function savePass(i) {
+  const val = document.getElementById(`up_${i}`).value.trim();
+  if (!val) { alert('La contraseña no puede estar vacía'); return; }
+  USERS[i].clave = val;
+  const btn = document.getElementById(`ubtn_${i}`);
+  btn.textContent = '✓ Guardado';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => { btn.textContent = 'Guardar'; btn.style.background = ''; }, 2200);
+}
+
+function downloadHTML() {
+  const html = document.documentElement.outerHTML;
+  const usersStr = JSON.stringify(USERS, null, 2);
+  // Replace the USERS array in the source with the updated one
+  const updated = html.replace(/let USERS = \[[\s\S]*?\];/, `let USERS = ${usersStr};`);
+  const blob = new Blob([updated], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'copa-elite-2026.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+window.onload = () => {
+  // Always start at login — no session persistence
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+};
+</script>
+</body>
+</html>
