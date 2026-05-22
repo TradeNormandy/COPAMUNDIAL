@@ -1024,7 +1024,7 @@ function parseCSV(txt) {
 }
 
 function csvURL(sheet) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheet)}`;
+  return `https://docs.google.com/spreadsheets/d/${1m13sgUPQ73U0GZQQX0hRCIoNB3ibzx6qm84_H1Qe38A}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheet)}`;
 }
 
 function compliance(rows) {
@@ -1082,7 +1082,7 @@ function groupWinner(grupo) {
 }
 
 function noSheetConfigured() {
-  return SHEET_ID === 'TU_SHEET_ID_AQUI';
+  return SHEET_ID === '1m13sgUPQ73U0GZQQX0hRCIoNB3ibzx6qm84_H1Qe38A';
 }
 
 /* ============================================================
@@ -1269,7 +1269,7 @@ function renderAdminResumen() {
 
   if (noSheetConfigured()) {
     html += `<div class="no-sheet">⚙️ <strong>Configura tu Google Sheets:</strong><br>
-    Abre el archivo HTML en un editor de texto, busca la variable <code>SHEET_ID</code> y reemplaza <code>'TU_SHEET_ID_AQUI'</code> con el ID de tu spreadsheet.<br>
+    Abre el archivo HTML en un editor de texto, busca la variable <code>SHEET_ID</code> y reemplaza <code>'1m13sgUPQ73U0GZQQX0hRCIoNB3ibzx6qm84_H1Qe38A'</code> con el ID de tu spreadsheet.<br>
     Luego asegúrate de que las pestañas se llamen exactamente <code>${SHEET_VENDEDORES}</code> y <code>${SHEET_CLIENTES}</code>, y que el spreadsheet esté publicado como CSV.</div>`;
   }
 
